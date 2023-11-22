@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+    <title>SQL GENERATOR</title>
+    <link rel = "stylesheet" type="text/css" href = "style.css" />
+</head>
+<body>
+    <h1>GENERATORE SQL</h1>
+    <div id="main">
+        <div id="viewer">
+            <textarea id="result" cols="30" rows="10" disabled></textarea>
+            <button id="download" onclick="download()">ESPORTA</button><br><br>
+        </div>
+        <div id="inputPage">
+            <p>Nome tabella</p> 
+            <input type="text" name="tableName" id="tableName" onblur="getTableName()" placeholder="Default">
+            <p style="font-size:0.95em;color: red;" id="tableError"></p>
+            <p>Nome campo</p> 
+            <input type="text" name="fieldName" id="fieldName">
+            <p>Tipo campo</p>
+            <select name="type" id="fieldType" onchange="setDimension()">
+            </select>
+            <p>Dimensione campo</p>
+            <input id="dimension1" type="number" name="fieldName" style="width: 40px;">
+            <input id="dimension2" type="number" name="fieldName" style="width: 40px;"><br><br>
+            <input type="checkbox" id="primaryKey" name="primaryKey" value="1">CHIAVE PRIMARIA<br>
+            <input type="checkbox" id="notNull" name="notNull" value="1">NON NULLO<br>
+            <input type="checkbox" id="unique" name="unique" value="1">UNICO<br><br>
+            <button id="mybutton" onclick="getField(); printSQL()">Inserisci campo</button><br><br>
+        </div>
+    </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="script.js"></script>
+</body>
