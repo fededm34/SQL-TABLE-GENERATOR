@@ -173,24 +173,84 @@ return numero;
 }
 //FUNZIONE GENERA DATA
 function generaData(passato) {
-let data = new Date();
+  let data = new Date();
 
-if (passato) {
-data.setDate(data.getDate() - Math.floor(Math.random() * 365));
-} else {
-data.setDate(data.getDate() + Math.floor(Math.random() * 365));
+  if (passato) {
+    data.setDate(data.getDate() - Math.floor(Math.random() * 365));
+  } else {
+    data.setDate(data.getDate() + Math.floor(Math.random() * 365));
+  }
+
+  const giorno = String(data.getDate()).padStart(2, '0');
+  const mese = String(data.getMonth() + 1).padStart(2, '0');
+  const anno = data.getFullYear();
+
+  return `${giorno}/${mese}/${anno}`;
 }
 
-return data;
+function parseSqlTable(sqlString) {
+	sqlString = sqlString.replace(/[\n\r]/g, '').replace(/\s+/g, ' ');
+	const matches = sqlString.match(/CREATE TABLE (\w+) \((.+)\);/);
+
+	const tableName = matches[1];
+	const columnsString = matches[2];
+
+	const columns = columnsString.split(',').map(column => {
+    const parts = column.trim().split(' ');
+    const name = parts[0];
+    const typeAndSize = parts.slice(1).join(' ');
+
+    let type = typeAndSize.toUpperCase();
+    let size = null;
+
+    const sizeMatch = typeAndSize.match(/\((\d+)\)/);
+    if (sizeMatch) {
+      type = typeAndSize.split('(')[0].toUpperCase();
+      size = parseInt(sizeMatch[1], 10);
+    }
+
+    const primaryKey = column.includes('PRIMARY KEY');
+    const unique = column.includes('UNIQUE');
+    const notNull = column.includes('NOT NULL');
+
+    return {
+      nome: name,
+      tipo: type,
+      grandezza: size,
+      chiave_primaria: primaryKey,
+      unique: unique,
+      not_null: notNull,
+    };
+  });
+
+  return columns;
 }
 
+function popolaTable() {
+	parsedTable = parseSqlTable(document.getElementById("result").value);
+  let insertCommand = `INSERT INTO ${tableName} (`;
+  insertCommand += parsedTable.map(colonna => colonna.nome).join(', ');
 
-function popola(){
-	let table = getElementById("result").value;
-	if(table==""){
-		swal("Errore nella popolazione del campo", "Non hai ancora generato la tabella");
-		return;
-	}
-	
-	
+  insertCommand += ') VALUES ';
+  const righeValori = [];
+  for (let i = 0; i < 5; i++) {
+    const valori = parsedTable.map(colonna => {
+      switch (colonna.tipo.toUpperCase()) {
+        case 'VARCHAR':
+          return `'${generaStringa(10)}'`;
+        case 'DATE':
+          return `'${generaData()}'`;
+        default:
+          return generaNumero(0, 255, false);
+      }
+    });
+
+    righeValori.push(`(${valori.join(', ')})`);
+  }
+
+  insertCommand += righeValori.join(', ');
+  document.getElementById("result").value += `\n\n\n\n ${insertCommand}`;
+  console.log(insertCommand);
+  return insertCommand;
+  
 }
