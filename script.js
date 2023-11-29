@@ -85,10 +85,6 @@ function getField(){
     field.fieldType = tipiDiDatiMySQL[tipoCampo.value];
     //LUNGHEZZA
     regex = /^[0-9]$/;
-    if(!regex.test(document.getElementById("dimension1").value) || !regex.test(document.getElementById("dimension2").value)){
-        swal("Errore nella lunghezza del campo", "Puoi inserire solamente numeri");
-        return;
-    }
     if(tipoCampo.value < 5 && tipoCampo.value > 2){
         field.fieldLength[0] = document.getElementById("dimension1").value;
     }else if(tipoCampo.value <= 2){
@@ -149,4 +145,52 @@ function download(){
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+}
+
+//FUNZIONE GENERA STRINGA
+function generaStringa(lun) {
+let stringa = '';
+const caratteri = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+
+for (let i = 0; i < lun; i++) {
+const indice = Math.floor(Math.random() * caratteri.length);
+stringa += caratteri.charAt(indice);
+}
+
+return stringa;
+}
+//FUNZIONE GENERA NUMERO
+function generaNumero(min, max, float = false) {
+let numero;
+
+if (float) {
+numero = Math.random() * (max - min) + min;
+} else {
+numero = Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+return numero;
+}
+//FUNZIONE GENERA DATA
+function generaData(passato) {
+let data = new Date();
+
+if (passato) {
+data.setDate(data.getDate() - Math.floor(Math.random() * 365));
+} else {
+data.setDate(data.getDate() + Math.floor(Math.random() * 365));
+}
+
+return data;
+}
+
+
+function popola(){
+	let table = getElementById("result").value;
+	if(table==""){
+		swal("Errore nella popolazione del campo", "Non hai ancora generato la tabella");
+		return;
+	}
+	
+	
 }
